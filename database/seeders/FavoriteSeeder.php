@@ -15,7 +15,7 @@ class FavoriteSeeder extends Seeder
     public function run(): void
     {
         $users = User::orderBy('id')->get();
-        $books = Book::orderBy('id')->get();
+        $bookIds = Book::orderBy('id')->pluck('id');
 
         $favoriteBookIndexes = [
             [0, 2, 5],
@@ -27,7 +27,7 @@ class FavoriteSeeder extends Seeder
 
         foreach ($users as $userIndex => $user) {
             $user->favoriteBooks()->syncWithoutDetaching(
-                $books->only($favoriteBookIndexes[$userIndex])->pluck('id')
+                $bookIds->only($favoriteBookIndexes[$userIndex])->values()
             );
         }
     }
