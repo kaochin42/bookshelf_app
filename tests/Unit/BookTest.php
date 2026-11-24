@@ -12,7 +12,8 @@ class BookTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_書籍は複数のジャンルを持てる(): void
+    /** 書籍は複数のジャンルを持てる */
+    public function test_book_has_many_genres(): void
     {
         // 用意する
         $book = Book::factory()->create();
@@ -25,7 +26,8 @@ class BookTest extends TestCase
         $this->assertCount(2, $book->genres);
     }
 
-    public function test_書籍の平均評価とレビュー件数を算出できる(): void
+    /** 書籍の平均評価とレビュー件数を算出できる */
+    public function test_book_calculates_average_rating_and_review_count(): void
     {
         // 用意する
         $book = Book::factory()->create();

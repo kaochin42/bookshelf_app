@@ -11,7 +11,8 @@ class ReviewTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_レビューにいいねしたユーザーを取得できる(): void
+    /** レビューにいいねしたユーザーを取得できる */
+    public function test_review_has_liked_by_users(): void
     {
         // 用意する
         $user = User::factory()->create();

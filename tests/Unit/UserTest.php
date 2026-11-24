@@ -11,7 +11,8 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_ユーザーは書籍をお気に入りに登録できる(): void
+    /** ユーザーは書籍をお気に入りに登録できる */
+    public function test_user_can_favorite_book(): void
     {
         // 用意する
         $user = User::factory()->create();

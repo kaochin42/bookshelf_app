@@ -11,7 +11,8 @@ class GenreTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_ジャンルは複数の書籍を持てる(): void
+    /** ジャンルは複数の書籍を持てる */
+    public function test_genre_has_many_books(): void
     {
         // 用意する
         $genre = Genre::factory()->create();
