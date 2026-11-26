@@ -11,7 +11,7 @@ class ReviewLikeTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** いいねは追加→解除のトグルになる */
+    /** いいねは追加→解除→再追加のトグルになる */
     public function test_like_is_toggled(): void
     {
         $user = User::factory()->create();
@@ -28,6 +28,11 @@ class ReviewLikeTest extends TestCase
         $response = $this->actingAs($user)->from($detailUrl)->post(route('reviews.like', $review));
         $response->assertSessionHas('success', 'いいねを取り消しました。');
         $this->assertDatabaseMissing('review_likes', ['user_id' => $user->id, 'review_id' => $review->id]);
+
+        // 再追加
+        $response = $this->actingAs($user)->from($detailUrl)->post(route('reviews.like', $review));
+        $response->assertSessionHas('success', 'いいねしました。');
+        $this->assertDatabaseHas('review_likes', ['user_id' => $user->id, 'review_id' => $review->id]);
     }
 
     /** ゲストはいいねできず、ログイン画面へ遷移する */

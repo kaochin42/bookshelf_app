@@ -69,7 +69,7 @@ class BookController extends Controller
     }
 
     /**
-     * 書籍を更新する（登録者は変更しない）
+     * 書籍を更新する（基本機能は認証なしのため、登録者もリクエストの値で更新する）
      */
     public function update(BookUpdateRequest $request, Book $book): BookResource
     {

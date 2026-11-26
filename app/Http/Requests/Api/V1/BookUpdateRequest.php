@@ -27,6 +27,8 @@ class BookUpdateRequest extends FormRequest
             'image_url' => ['nullable', 'url', 'max:255'],
             'genres' => ['required', 'array', 'min:1'],
             'genres.*' => ['integer', 'exists:genres,id'],
+            // 基本機能は認証なしのため、登録者をリクエストで受け取る
+            'user_id' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 
@@ -41,6 +43,7 @@ class BookUpdateRequest extends FormRequest
             'image_url' => '画像URL',
             'genres' => 'ジャンル',
             'genres.*' => 'ジャンル',
+            'user_id' => '登録者ID',
         ];
     }
 
@@ -59,6 +62,8 @@ class BookUpdateRequest extends FormRequest
             'genres.required' => ':attributeは1つ以上選択してください。',
             'genres.min' => ':attributeは1つ以上選択してください。',
             'genres.*.exists' => '選択された:attributeは存在しません。',
+            'user_id.required' => ':attributeは必須です。',
+            'user_id.exists' => '指定された:attributeは存在しません。',
         ];
     }
 }
