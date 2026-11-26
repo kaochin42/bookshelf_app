@@ -29,7 +29,7 @@ class BookResource extends JsonResource
             'average_rating' => $this->reviews_avg_rating !== null
                 ? round((float) $this->reviews_avg_rating, 1)
                 : null,
-            'reviews_count' => $this->reviews_count,
+            'review_count' => $this->reviews_count,
             // 詳細取得時のみ（reviews を読み込み済みの場合に出力）
             'reviews' => $this->whenLoaded('reviews', fn () => $this->reviews->map(fn ($review) => [
                 'id' => $review->id,

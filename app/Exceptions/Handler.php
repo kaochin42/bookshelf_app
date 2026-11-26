@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
         // 公開API: 存在しない書籍IDは JSON で 404 を返す
         $this->renderable(function (NotFoundHttpException $e, $request) {
             if ($request->is('api/*') && $e->getPrevious() instanceof ModelNotFoundException) {
-                return response()->json(['message' => '書籍が見つかりません。'], 404);
+                return response()->json(['error' => '書籍が見つかりませんでした。'], 404);
             }
         });
     }

@@ -50,7 +50,7 @@ class BookApiTest extends TestCase
                     'image_url',
                     'genres',
                     'average_rating',
-                    'reviews_count',
+                    'review_count',
                 ]],
                 'links',
                 'meta',
@@ -122,9 +122,9 @@ class BookApiTest extends TestCase
         $response->assertOk();
         $data = collect($response->json('data'))->keyBy('id');
         $this->assertSame(4.5, $data[$reviewed->id]['average_rating']);
-        $this->assertSame(2, $data[$reviewed->id]['reviews_count']);
+        $this->assertSame(2, $data[$reviewed->id]['review_count']);
         $this->assertNull($data[$noReview->id]['average_rating']);
-        $this->assertSame(0, $data[$noReview->id]['reviews_count']);
+        $this->assertSame(0, $data[$noReview->id]['review_count']);
     }
 
     /** 詳細はジャンルとレビュー（投稿者名つき）を含めて返す */
@@ -151,7 +151,7 @@ class BookApiTest extends TestCase
     {
         $response = $this->getJson('/api/v1/books/9999');
 
-        $response->assertNotFound()->assertExactJson(['message' => '書籍が見つかりません。']);
+        $response->assertNotFound()->assertExactJson(['error' => '書籍が見つかりませんでした。']);
     }
 
     /** 登録に成功すると201を返し、書籍とジャンル紐付けが保存される */
@@ -250,7 +250,7 @@ class BookApiTest extends TestCase
     {
         $response = $this->putJson('/api/v1/books/9999', $this->validPayload());
 
-        $response->assertNotFound()->assertExactJson(['message' => '書籍が見つかりません。']);
+        $response->assertNotFound()->assertExactJson(['error' => '書籍が見つかりませんでした。']);
     }
 
     /** 削除に成功すると204を返し、関連データも削除される */
@@ -277,6 +277,6 @@ class BookApiTest extends TestCase
     {
         $response = $this->deleteJson('/api/v1/books/9999');
 
-        $response->assertNotFound()->assertExactJson(['message' => '書籍が見つかりません。']);
+        $response->assertNotFound()->assertExactJson(['error' => '書籍が見つかりませんでした。']);
     }
 }
