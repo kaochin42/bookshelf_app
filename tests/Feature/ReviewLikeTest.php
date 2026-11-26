@@ -29,7 +29,6 @@ class ReviewLikeTest extends TestCase
         $response->assertSessionHas('success', 'いいねを取り消しました。');
         $this->assertDatabaseMissing('review_likes', ['user_id' => $user->id, 'review_id' => $review->id]);
 
-
         // 再追加
         $response = $this->actingAs($user)->from($detailUrl)->post(route('reviews.like', $review));
         $response->assertSessionHas('success', 'いいねしました。');

@@ -229,7 +229,7 @@ class BookApiTest extends TestCase
         $payload = $this->validPayload(['isbn' => $book->isbn]);
         unset($payload['user_id']);
 
-        $response = $this->putJson('/api/v1/books/' . $book->id, $payload);
+        $response = $this->putJson('/api/v1/books/'.$book->id, $payload);
 
         $response->assertStatus(422)->assertJsonValidationErrors(['user_id']);
     }
