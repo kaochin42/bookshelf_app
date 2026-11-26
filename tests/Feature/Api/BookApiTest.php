@@ -204,11 +204,10 @@ class BookApiTest extends TestCase
         $response->assertStatus(422)->assertJsonValidationErrors(['user_id']);
     }
 
-    /** 更新に成功すると200を返し、ジャンル紐付けも更新される。登録者は変わらない */
-    public function test_update_changes_book_but_not_owner(): void
+    /** 更新に成功すると200を返し、ジャンル紐付けも更新される。登録者は送信したuser_idに変わる */
+    public function test_update_changes_book_and_owner(): void
     {
         $book = Book::factory()->create();
-        $originalOwnerId = $book->user_id;
         $newGenre = Genre::factory()->create();
         $payload = $this->validPayload([
             'title' => '更新後タイトル',
@@ -219,8 +218,20 @@ class BookApiTest extends TestCase
         $response = $this->putJson('/api/v1/books/'.$book->id, $payload);
 
         $response->assertOk()->assertJsonPath('data.title', '更新後タイトル');
-        $this->assertDatabaseHas('books', ['id' => $book->id, 'title' => '更新後タイトル', 'user_id' => $originalOwnerId]);
+        $this->assertDatabaseHas('books', ['id' => $book->id, 'title' => '更新後タイトル', 'user_id' => $payload['user_id']]);
         $this->assertDatabaseHas('book_genre', ['book_id' => $book->id, 'genre_id' => $newGenre->id]);
+    }
+
+    /** 更新でも登録者IDが未指定だと更新できない */
+    public function test_update_fails_without_user_id(): void
+    {
+        $book = Book::factory()->create();
+        $payload = $this->validPayload(['isbn' => $book->isbn]);
+        unset($payload['user_id']);
+
+        $response = $this->putJson('/api/v1/books/' . $book->id, $payload);
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['user_id']);
     }
 
     /** 他の書籍と同じISBNに更新すると422になる */
