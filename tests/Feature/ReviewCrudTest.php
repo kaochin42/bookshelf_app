@@ -46,6 +46,20 @@ class ReviewCrudTest extends TestCase
         $this->assertDatabaseCount('reviews', 0);
     }
 
+    /** コメントが空だと投稿できない */
+    public function test_store_review_fails_when_comment_is_empty(): void
+    {
+        $user = User::factory()->create();
+        $book = Book::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('reviews.store', $book), [
+            'rating' => 4,
+        ]);
+
+        $response->assertSessionHasErrors(['comment' => 'コメントは必須です。']);
+        $this->assertDatabaseCount('reviews', 0);
+    }
+
     /** ゲストはレビューを投稿できず、ログイン画面へ遷移する */
     public function test_guest_cannot_store_review(): void
     {
@@ -79,7 +93,7 @@ class ReviewCrudTest extends TestCase
         $user = User::factory()->create();
         $review = Review::factory()->create(['rating' => 3]);
 
-        $response = $this->actingAs($user)->put(route('reviews.update', $review), ['rating' => 5]);
+        $response = $this->actingAs($user)->put(route('reviews.update', $review), ['rating' => 5, 'comment' => '他人のコメント']);
 
         $response->assertForbidden();
         $this->assertDatabaseHas('reviews', ['id' => $review->id, 'rating' => 3]);
