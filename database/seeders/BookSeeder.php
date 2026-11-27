@@ -11,11 +11,11 @@ class BookSeeder extends Seeder
 {
     /**
      * 書籍11件を登録し、ジャンルを紐付ける(ISBN重複時は作成しない)。
-     * 登録者は先頭ユーザー(山田太郎)。UserSeeder・GenreSeeder の後に実行すること。
+     * 登録者は全ユーザーからランダムに割り当てる。UserSeeder・GenreSeeder の後に実行すること。
      */
     public function run(): void
     {
-        $user = User::first();
+        $users = User::all();
 
         $books = [
             ['title' => '吾輩は猫である', 'author' => '夏目漱石', 'isbn' => '9784101010014', 'published_date' => '1905-01-01', 'description' => '中学教師の家に住み着いた猫の目を通して、人間社会を風刺的に描いた長編小説。', 'genres' => ['小説']],
@@ -40,7 +40,7 @@ class BookSeeder extends Seeder
                     'published_date' => $data['published_date'],
                     'description' => $data['description'],
                     'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text='.($index + 1),
-                    'user_id' => $user->id,
+                    'user_id' => $users->random()->id,
                 ],
             );
 
