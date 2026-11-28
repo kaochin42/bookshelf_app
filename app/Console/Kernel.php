@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // 毎日20時に期限切れ化とリマインダー通知を実行
+        $schedule->command('reading-plans:process')->dailyAt('20:00');
     }
 
     /**
