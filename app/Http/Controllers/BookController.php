@@ -5,17 +5,38 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookRequest;
 use App\Models\Book;
 use App\Models\Genre;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::with('genres')
-            ->withAvg('reviews', 'rating')
-            ->latest()
-            ->paginate(10);
+        $keyword = $request->query('keyword');
+        $genreId = $request->query('genre');
 
-        return view('books.index', compact('books'));
+        $query = Book::with('genres')
+            ->withAvg('reviews', 'rating')
+            ->when(filled($keyword), function ($query) use ($keyword) {
+                $query->where(function ($query) use ($keyword) {
+                    $query->where('title', 'like', "%{$keyword}%")
+                        ->orWhere('author', 'like', "%{$keyword}%");
+                });
+            })
+            ->when(filled($genreId), function ($query) use ($genreId) {
+                $query->whereHas('genres', fn($query) => $query->where('genres.id', $genreId));
+            });
+
+        $query = match ($request->query('sort')) {
+            'oldest' => $query->oldest()->oldest('id'),
+            'title' => $query->orderBy('title')->orderBy('id'),
+            'rating' => $query->orderByDesc('reviews_avg_rating')->orderByDesc('id'),
+            default => $query->latest()->latest('id'),
+        };
+
+        $books = $query->paginate(10)->withQueryString();
+        $genres = Genre::all();
+
+        return view('books.index', compact('books', 'genres'));
     }
 
     public function create()
@@ -33,7 +54,7 @@ class BookController extends Controller
             'title' => $validated['title'],
             'author' => $validated['author'],
             'isbn' => $validated['isbn'],
-            'published_date' => $validated['published_date'],
+            'published_date' => $validated['published_date'] ?? null,
             'description' => $validated['description'] ?? null,
             'image_url' => $validated['image_url'] ?? null,
             'user_id' => auth()->id(),
@@ -71,7 +92,7 @@ class BookController extends Controller
             'title' => $validated['title'],
             'author' => $validated['author'],
             'isbn' => $validated['isbn'],
-            'published_date' => $validated['published_date'],
+            'published_date' => $validated['published_date'] ?? null,
             'description' => $validated['description'] ?? null,
             'image_url' => $validated['image_url'] ?? null,
         ]);
