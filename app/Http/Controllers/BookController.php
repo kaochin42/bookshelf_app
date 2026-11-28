@@ -23,7 +23,7 @@ class BookController extends Controller
                 });
             })
             ->when(filled($genreId), function ($query) use ($genreId) {
-                $query->whereHas('genres', fn($query) => $query->where('genres.id', $genreId));
+                $query->whereHas('genres', fn ($query) => $query->where('genres.id', $genreId));
             });
 
         $query = match ($request->query('sort')) {

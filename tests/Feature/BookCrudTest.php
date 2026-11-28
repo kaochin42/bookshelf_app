@@ -79,7 +79,8 @@ class BookCrudTest extends TestCase
 
         $response = $this->actingAs($user)->post(route('books.store'), []);
 
-        $response->assertSessionHasErrors(['title', 'author', 'isbn', 'published_date', 'genres']);
+        $response->assertSessionHasErrors(['title', 'author', 'isbn', 'genres']);
+        $response->assertSessionDoesntHaveErrors(['published_date']);
         $this->assertDatabaseCount('books', 0);
     }
 
